@@ -1,0 +1,51 @@
+name: RecallDesk live Meko validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MEKO_API_KEY: ${{ secrets.MEKO_API_KEY }}
+      MEKO_DATAPACK_ID: 5f265ab7-ae13-4098-b6f4-ee17b236f6e2
+      MEKO_MCP_URL: https://mcp.mekodata.ai/mcp
+      USE_GEMINI: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require encrypted credential
+        run: |
+          if [ -z "$MEKO_API_KEY" ]; then
+            echo "::error::Configure MEKO_API_KEY in repository Actions secrets."
+            exit 1
+          fi
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest -v
+      - name: Baseline
+        run: python app.py baseline
+      - name: Live Meko evaluation
+        run: python app.py meko
+      - name: Verify repeat retrieval
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('results/meko.json').read_text())['summary']
+          assert s['mode']=='meko' and s['tickets']==36
+          assert s['reused']>0, 'No verified shared memory retrieval observed'
+          print('Live verified reuse:', s['reused'], '/', 24)
+          PY
+      - name: Store synthetic evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recalldesk-validation
+          path: |
+            results/baseline.json
+            results/meko.json
+          if-no-files-found: warn
+          retention-days: 30
