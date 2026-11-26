@@ -1,0 +1,254 @@
+[
+  {
+    "id": "T001",
+    "issue": "SSO",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: SSO redirect loop."
+  },
+  {
+    "id": "T002",
+    "issue": "INV",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Invoice download failure."
+  },
+  {
+    "id": "T003",
+    "issue": "SYNC",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Delayed workspace sync."
+  },
+  {
+    "id": "T004",
+    "issue": "EXPORT",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: CSV export missing columns."
+  },
+  {
+    "id": "T005",
+    "issue": "INVITE",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Invitation expired."
+  },
+  {
+    "id": "T006",
+    "issue": "MFA",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: MFA code rejected."
+  },
+  {
+    "id": "T007",
+    "issue": "SEARCH",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Search returns stale entries."
+  },
+  {
+    "id": "T008",
+    "issue": "UPLOAD",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Attachment rejected."
+  },
+  {
+    "id": "T009",
+    "issue": "NOTIFY",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Notifications not received."
+  },
+  {
+    "id": "T010",
+    "issue": "ROLE",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Permission denied."
+  },
+  {
+    "id": "T011",
+    "issue": "WEBHOOK",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Webhook delivery timeout."
+  },
+  {
+    "id": "T012",
+    "issue": "LOCALE",
+    "cycle": 1,
+    "agent": "triage-agent",
+    "message": "Customer reports: Incorrect timezone display."
+  },
+  {
+    "id": "T013",
+    "issue": "SSO",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports sso redirect loop again."
+  },
+  {
+    "id": "T014",
+    "issue": "INV",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports invoice download failure again."
+  },
+  {
+    "id": "T015",
+    "issue": "SYNC",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports delayed workspace sync again."
+  },
+  {
+    "id": "T016",
+    "issue": "EXPORT",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports csv export missing columns again."
+  },
+  {
+    "id": "T017",
+    "issue": "INVITE",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports invitation expired again."
+  },
+  {
+    "id": "T018",
+    "issue": "MFA",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports mfa code rejected again."
+  },
+  {
+    "id": "T019",
+    "issue": "SEARCH",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports search returns stale entries again."
+  },
+  {
+    "id": "T020",
+    "issue": "UPLOAD",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports attachment rejected again."
+  },
+  {
+    "id": "T021",
+    "issue": "NOTIFY",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports notifications not received again."
+  },
+  {
+    "id": "T022",
+    "issue": "ROLE",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports permission denied again."
+  },
+  {
+    "id": "T023",
+    "issue": "WEBHOOK",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports webhook delivery timeout again."
+  },
+  {
+    "id": "T024",
+    "issue": "LOCALE",
+    "cycle": 2,
+    "agent": "billing-agent",
+    "message": "Another workspace reports incorrect timezone display again."
+  },
+  {
+    "id": "T025",
+    "issue": "SSO",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: sso redirect loop."
+  },
+  {
+    "id": "T026",
+    "issue": "INV",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: invoice download failure."
+  },
+  {
+    "id": "T027",
+    "issue": "SYNC",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: delayed workspace sync."
+  },
+  {
+    "id": "T028",
+    "issue": "EXPORT",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: csv export missing columns."
+  },
+  {
+    "id": "T029",
+    "issue": "INVITE",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: invitation expired."
+  },
+  {
+    "id": "T030",
+    "issue": "MFA",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: mfa code rejected."
+  },
+  {
+    "id": "T031",
+    "issue": "SEARCH",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: search returns stale entries."
+  },
+  {
+    "id": "T032",
+    "issue": "UPLOAD",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: attachment rejected."
+  },
+  {
+    "id": "T033",
+    "issue": "NOTIFY",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: notifications not received."
+  },
+  {
+    "id": "T034",
+    "issue": "ROLE",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: permission denied."
+  },
+  {
+    "id": "T035",
+    "issue": "WEBHOOK",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: webhook delivery timeout."
+  },
+  {
+    "id": "T036",
+    "issue": "LOCALE",
+    "cycle": 3,
+    "agent": "technical-agent",
+    "message": "Please investigate a recurring problem: incorrect timezone display."
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "SSO": {
+    "symptom": "SSO redirect loop",
+    "resolution": "Check the configured callback URL and identity-provider issuer."
+  },
+  "INV": {
+    "symptom": "Invoice download failure",
+    "resolution": "Regenerate the invoice from the billing portal and check the file status."
+  },
+  "SYNC": {
+    "symptom": "Delayed workspace sync",
+    "resolution": "Check service status and retry the documented synchronization workflow."
+  },
+  "EXPORT": {
+    "symptom": "CSV export missing columns",
+    "resolution": "Reset the saved export column selection and regenerate the file."
+  },
+  "INVITE": {
+    "symptom": "Invitation expired",
+    "resolution": "Ask an authorized workspace administrator to issue a new invitation."
+  },
+  "MFA": {
+    "symptom": "MFA code rejected",
+    "resolution": "Confirm device clock synchronization; use the approved account recovery workflow if needed."
+  },
+  "SEARCH": {
+    "symptom": "Search returns stale entries",
+    "resolution": "Check indexing status and request the documented reindex workflow."
+  },
+  "UPLOAD": {
+    "symptom": "Attachment rejected",
+    "resolution": "Check supported file type and file size before retrying."
+  },
+  "NOTIFY": {
+    "symptom": "Notifications not received",
+    "resolution": "Check notification preferences and delivery status."
+  },
+  "ROLE": {
+    "symptom": "Permission denied",
+    "resolution": "Ask an authorized administrator to verify the required role; do not bypass access controls."
+  },
+  "WEBHOOK": {
+    "symptom": "Webhook delivery timeout",
+    "resolution": "Check endpoint health and retry through the delivery dashboard."
+  },
+  "LOCALE": {
+    "symptom": "Incorrect timezone display",
+    "resolution": "Review workspace timezone settings and refresh the affected view."
+  }
+}
