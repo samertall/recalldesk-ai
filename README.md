@@ -14,7 +14,7 @@ Open http://127.0.0.1:8080. No packages or credentials required for local simula
 
 ## Run with Meko Cloud
 1. Sign up at https://cloud.mekodata.ai/signup, create a dedicated datapack (RecallDesk), and copy its ID. In Settings > API Keys generate a key.
-2. Upload `data/runbook.json` to the datapack knowledge base in the portal and wait until indexed.
+2. The benchmark uses the local canonical runbook; uploading it to the datapack knowledge base is optional and is not required for this evaluation.
 3. Install the MCP client in a virtual environment: `python -m pip install -r requirements.txt`.
 4. Set credentials in your shell (never commit them). PowerShell example:
 
@@ -25,13 +25,32 @@ python app.py meko
 python app.py serve
 ```
 
-In Bash, use `export MEKO_API_KEY=...` and `export MEKO_DATAPACK_ID=...`. Select Live Meko results in the dashboard. The adapter uses the documented streamable HTTP endpoint, bearer authorization and user-agent header. It discovers available tools and uses context_search when exposed, otherwise documented memory_search; it calls memory_add, conversation_create, conversation_add_message and artifact_put. It intentionally fails on service errors rather than silently substituting local data. Use a dedicated test datapack. Same-account agent namespaces are used; cross-user permissions and memory promotion are not implemented. The fixture marker scopes each experiment, so old experiments cannot inflate reuse results. Inspect raw Meko portal traces for verification. Live adapter is untested against an authenticated server; tool response schemas may require adjustment. The optional Gemini model workflow is also included, but not tested against a live model API.
+In Bash, use `export MEKO_API_KEY=...` and `export MEKO_DATAPACK_ID=...`. Select Live Meko results in the dashboard. The adapter uses the documented streamable HTTP endpoint, bearer authorization and user-agent header. It discovers available tools and uses documented memory_search; it calls memory_add, conversation_create, conversation_add_message and artifact_put. It intentionally fails on service errors rather than silently substituting local data. Use a dedicated test datapack. Same-account agent namespaces are used; cross-user permissions and memory promotion are not implemented. The fixture marker scopes each experiment, so old experiments cannot inflate reuse results. Inspect raw Meko portal traces for verification. The authenticated live adapter passed GitHub Actions run #4; see the verified evaluation below. The optional Gemini model workflow is also included, but not tested against a live model API.
 
 ## Architecture
 Ticket fixture → agent identity → Meko context search → verified memory match OR runbook lookup → fixture oracle → memory write → response → conversation / artifact logging. The local canonical runbook is an explicit validation oracle, not learned model behavior. Only synthetic approved solutions are persisted. The app does not execute retrieved instructions.
 
 ## Evaluation
-36 tickets: 12 issue codes repeated in three cycles. Ticket labels are preassigned. Baseline uses four logical actions per ticket. Local simulation uses six on first occurrence and three for repeats; 24 repeated tickets reuse memory. Both match all 36 canonical fixtures by construction, not a real accuracy measure. Overall action count is equal at 144; repeats use 25% fewer actions than baseline (3 versus 4). Local latency is implementation overhead only, not a meaningful service benchmark. No token or cost claims. Live results must be generated separately. To meet the competition's stronger expectations, run the included optional model-backed workflow, add independent human review, and verify portal retrievals and artifacts.
+36 tickets: 12 issue codes repeated in three cycles. Ticket labels are preassigned. Baseline uses four logical actions per ticket. Local simulation uses six on first occurrence and three for repeats; 24 repeated tickets reuse memory. Both match all 36 canonical fixtures by construction, not a real accuracy measure. Overall action count is equal at 144; repeats use 25% fewer actions than baseline (3 versus 4). Local latency is implementation overhead only, not a meaningful service benchmark. No token or cost claims. Live results are documented below. To meet the competition's stronger expectations, run the included optional model-backed workflow, add independent human review, and verify portal retrievals and artifacts.
+
+## Verified live Meko evaluation — 2026-11-26
+
+GitHub Actions [run #4](https://github.com/samertall/recalldesk-ai/actions/runs/45819954272) completed successfully on commit `9a69382bb865ce34b9a1219ec0a7ac5f7686a694`. The authenticated MCP workflow processed all 36 synthetic support tickets, wrote fixture-approved memories, retrieved 24 verified repeat resolutions, logged conversations and stored an evaluation artifact. Both automated unit tests passed.
+
+| Metric | Baseline | Live Meko |
+|---|---:|---:|
+| Tickets | 36 | 36 |
+| Canonical fixture matches | 36 | 36 |
+| Verified memory reuses | 0 | 24 of 24 repeat tickets |
+| First-occurrence actions | 4 | 6 |
+| Repeat-occurrence actions | 4 | 3 |
+| Total logical actions | 144 | 144 |
+| Mean first-occurrence latency (ms) | Not comparable | 1888.585 |
+| Mean repeat-occurrence latency (ms) | Not comparable | 1193.770 |
+
+The repeat-ticket action count is 25% lower than the baseline; total logical actions are unchanged. Mean repeat processing latency is 36.8% lower than first-occurrence latency **within the live Meko run**, excluding conversation logging. The baseline is a local deterministic fixture, not an equivalent network service. Fixture correctness is by construction, not independent model accuracy. No model token or cost savings were measured; the optional Gemini workflow was disabled. This evaluation does not establish production performance or independent cross-user access control.
+
+Evidence: [successful workflow](https://github.com/samertall/recalldesk-ai/actions/runs/45819954272), [synthetic evaluation artifact](https://github.com/samertall/recalldesk-ai/actions/runs/45819954272/artifacts/15118520125) (subject to GitHub artifact retention).
 
 ## Submission
 - Public GitHub repository with setup instructions.
@@ -42,7 +61,7 @@ Ticket fixture → agent identity → Meko context search → verified memory ma
 Docs: https://docs.mekodata.ai/reference/mcp-server/ and https://docs.mekodata.ai/use-meko/api-keys/.
 
 ## Optional model-backed experiment
-Set `USE_GEMINI=1`, `GEMINI_API_KEY`, and optionally `GEMINI_MODEL` (choose an available Gemini model). For both baseline and Meko modes, the model receives only the ticket text and category catalog for classification. On a memory miss, it extracts the exact runbook resolution. The fixture oracle blocks incorrect proposals from memory and counts them as failures. A memory hit avoids the resolution model call. Token counts come from Gemini response usage metadata. This is a constrained retrieval/extraction experiment, not open-ended troubleshooting. Free quota and model availability depend on your account. Both live integrations still require validation.
+Set `USE_GEMINI=1`, `GEMINI_API_KEY`, and optionally `GEMINI_MODEL` (choose an available Gemini model). For both baseline and Meko modes, the model receives only the ticket text and category catalog for classification. On a memory miss, it extracts the exact runbook resolution. The fixture oracle blocks incorrect proposals from memory and counts them as failures. A memory hit avoids the resolution model call. Token counts come from Gemini response usage metadata. This is a constrained retrieval/extraction experiment, not open-ended troubleshooting. Free quota and model availability depend on your account. The optional model-backed experiment still requires validation.
 
 ```powershell
 $env:USE_GEMINI = '1'
