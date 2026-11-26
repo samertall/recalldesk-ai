@@ -8,13 +8,39 @@ RUNBOOK=json.loads((ROOT/'data/runbook.json').read_text())
 
 def unwrap(result):
     if result.isError: raise RuntimeError('Meko tool returned an error')
-    if getattr(result,'structuredContent',None): return result.structuredContent
+    if getattr(result,'structuredContent',None):
+        structured=result.structuredContent
+        if isinstance(structured,dict) and set(structured)=={'result'}: return structured['result']
+        return structured
     items=[]
     for x in result.content:
         if getattr(x,'type',None)=='text':
             try: items.append(json.loads(x.text))
             except ValueError: items.append(x.text)
     return items[0] if len(items)==1 else items
+
+def conversation_id(value):
+    """Handle direct IDs and MCP response envelopes without guessing unrelated IDs."""
+    if isinstance(value,str):
+        try: return conversation_id(json.loads(value))
+        except (ValueError,TypeError,RecursionError):
+            try: return str(uuid.UUID(value))
+            except ValueError: return None
+    if isinstance(value,list):
+        for item in value:
+            cid=conversation_id(item)
+            if cid: return cid
+    if isinstance(value,dict):
+        for key in ('conversation_id','conversationId','id'):
+            item=value.get(key)
+            if isinstance(item,str):
+                try: return str(uuid.UUID(item))
+                except ValueError: pass
+        for key in ('conversation','data','result','response','value','content','text'):
+            if key in value:
+                cid=conversation_id(value[key])
+                if cid: return cid
+    return None
 
 def strings(value):
     if isinstance(value,str): yield value
@@ -63,8 +89,8 @@ async def evaluate(mode,store=None):
         model=Gemini()
     review_cid=None
     if mode=='meko':
-        review=await store.call('conversation_create',agent_id='specialist-review',title='Synthetic verification '+run,session_id=run+'-review')
-        review_cid=review.get('conversation_id') or review.get('id') if isinstance(review,dict) else None
+        review=await store.call('conversation_create',agent_id='specialist-review',title='Synthetic verification '+run,session_id=str(uuid.uuid4()))
+        review_cid=conversation_id(review)
         if not review_cid: raise RuntimeError('Meko review conversation ID missing')
     for ticket in TICKETS:
         start=time.perf_counter(); expected=ticket['issue']; agent=ticket['agent']; actions=[]; found=None; approved=False
@@ -76,8 +102,8 @@ async def evaluate(mode,store=None):
         marker=f'RECALLDESK|{run}:{code}|'
         cid=None
         if mode=='meko':
-            conv=await store.call('conversation_create',agent_id=agent,title=ticket['id'],session_id=f'{run}-{ticket["id"]}')
-            cid=conv.get('conversation_id') or conv.get('id') if isinstance(conv,dict) else None
+            conv=await store.call('conversation_create',agent_id=agent,title=ticket['id'],session_id=str(uuid.uuid4()))
+            cid=conversation_id(conv)
             if not cid: raise RuntimeError('Meko conversation ID missing')
         if store:
             extra={'conversation_id':cid} if cid else {}
