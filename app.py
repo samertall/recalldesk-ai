@@ -78,6 +78,12 @@ class Live:
             diagnostic=str(getattr(result,'content',[])).lower()
             categories={'authentication':('unauthorized','401','invalid token','api key','authentication'),'authorization':('forbidden','403','permission denied','access denied'),'schema':('validation','required','invalid argument','missing field','422'),'quota':('quota','rate limit','429'),'datapack':('datapack not found','invalid datapack'),'service':('500','502','503','timeout','unavailable')}
             kind=next((k for k,terms in categories.items() if any(t in diagnostic for t in terms)),'unclassified server error')
+            if kind=='schema':
+                # Report names and types only, never argument values or raw server content.
+                types={k:type(v).__name__ for k,v in a.items()}
+                expected={k:props.get(k,{}).get('type','unspecified') for k in a}
+                fields=sorted(k for k in props if k.lower() in diagnostic)
+                print(f'Meko schema diagnostic: tool={name}, argument_types={types}, expected_types={expected}, referenced_fields={fields}',flush=True)
             raise RuntimeError(f'Meko {name} failed: {kind}') from None
         return value
 
@@ -121,12 +127,12 @@ async def evaluate(mode,store=None):
             approved=code==expected and resolution==rule['resolution']
             if not approved: resolution='Escalate to human reviewer'
             if store and approved:
-                await store.call('memory_add',text=marker+resolution,agent_id='specialist-review',metadata={'synthetic':True,'approved_by':'fixture-oracle','ticket':ticket['id']},**({'conversation_id':review_cid} if review_cid else {}))
+                await store.call('memory_add',text=marker+resolution,agent_id='specialist-review',**({'conversation_id':review_cid} if review_cid else {}))
                 actions.append('Save fixture-approved learning')
         correct=code==expected and resolution==rule['resolution']; actions.append('Return resolution')
         trace={'ticket':ticket['id'],'issue':code,'agent':agent,'message':ticket['message'],'repeat':ticket['cycle']>1,'reused':bool(found),'approved_new':approved,'resolution':resolution,'correct':correct,'steps':len(actions),'latency_ms':round((time.perf_counter()-start)*1000,3),'actions':actions}
         if store and mode=='meko':
-            await store.call('conversation_add_message',conversation_id=cid,agent_id=agent,input=ticket['message'],output=resolution,plan=actions,metadata={'ticket':ticket['id'],'reused':bool(found),'synthetic':True})
+            await store.call('conversation_add_message',conversation_id=cid,agent_id=agent,input=ticket['message'],output=resolution,plan=actions)
             trace['conversation_id']=cid
         traces.append(trace)
     repeat=[t for t in traces if t['repeat']]; first=[t for t in traces if not t['repeat']]
